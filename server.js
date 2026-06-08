@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 
 const webhookRoutes = require("./routes/webhook");
@@ -24,4 +26,24 @@ app.get("/health", (req, res) => {
         status: "OK",
         message: "VMS Backend Running"
     });
+});
+
+const db = require("./database/db");
+
+app.get("/db-test", async (req, res) => {
+    try {
+
+        const [rows] = await db.query(
+            "SELECT * FROM residents"
+        );
+
+        res.json(rows);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json(error.message);
+
+    }
 });
