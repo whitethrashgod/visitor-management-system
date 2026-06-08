@@ -2,59 +2,170 @@ const express = require("express");
 
 const router = express.Router();
 
-const requests = [];
+const db = require("../database/db");
 
 // Create Request
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
 
-    const request = {
-        id: requests.length + 1,
-        visitorName: req.body.visitorName,
-        unit: req.body.unit,
-        status: "Pending"
-    };
+    try {
 
-    requests.push(request);
+        const { visitorName, unit } = req.body;
 
-    res.status(201).json(request);
+        const [visitorResult] = await db.query(
+            `
+            INSERT INTO visitors (visitor_name)
+            VALUES (?)
+            `,
+            [visitorName]
+        );
+
+        const visitorId = visitorResult.insertId;
+
+        const [residentRows] = await db.query(
+            `
+            SELECT id
+            FROM residents
+            WHERE flat_number = ?
+            `,
+            [unit]
+        );
+
+        if (residentRows.length === 0) {
+            return res.status(404).json({
+                message: "Flat not found"
+            });
+        }
+
+        const residentId = residentRows[0].id;
+
+        await db.query(
+            `
+            INSERT INTO visitor_requests
+            (visitor_id,resident_id,guard_id,status)
+            VALUES (?,?,?,?)
+            `,
+            [
+                visitorId,
+                residentId,
+                1,
+                "PENDING"
+            ]
+        );
+
+        res.status(201).json({
+            message: "Request created"
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
 });
 
 // Get All Requests
-router.get("/", (req, res) => {
-    res.json(requests);
+router.get("/", async (req, res) => {
+
+    try {
+
+        const [rows] = await db.query(`
+            SELECT
+                vr.id,
+                v.visitor_name,
+                r.flat_number,
+                vr.status
+            FROM visitor_requests vr
+            JOIN visitors v
+                ON vr.visitor_id = v.id
+            JOIN residents r
+                ON vr.resident_id = r.id
+        `);
+
+        res.json(rows);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
 });
 
-router.post("/:id/approve", (req, res) => {
+router.post("/:id/approve", async (req, res) => {
 
-    const request = requests.find(
-        r => r.id == req.params.id
-    );
+    try {
 
-    if (!request) {
-        return res.status(404).json({
-            message: "Request not found"
+        const [result] = await db.query(
+            `
+            UPDATE visitor_requests
+            SET status = 'APPROVED'
+            WHERE id = ?
+            `,
+            [req.params.id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Request not found"
+            });
+        }
+
+        res.json({
+            message: "Request approved"
         });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
     }
 
-    request.status = "Approved";
-
-    res.json(request);
 });
 
-router.post("/:id/deny", (req, res) => {
+router.post("/:id/deny", async (req, res) => {
 
-    const request = requests.find(
-        r => r.id == req.params.id
-    );
+    try {
 
-    if (!request) {
-        return res.status(404).json({
-            message: "Request not found"
+        const [result] = await db.query(
+            `
+            UPDATE visitor_requests
+            SET status = 'REJECTED'
+            WHERE id = ?
+            `,
+            [req.params.id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Request not found"
+            });
+        }
+
+        res.json({
+            message: "Request rejected"
         });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
     }
 
-    request.status = "Denied";
-
-    res.json(request);
 });
+
 module.exports = router;
