@@ -28,22 +28,30 @@ app.get("/health", (req, res) => {
     });
 });
 
-const db = require("./database/db");
+const sql = require("mssql");
+const { config } = require("./database/db");
 
 app.get("/db-test", async (req, res) => {
+
     try {
 
-        const [rows] = await db.query(
-            "SELECT * FROM residents"
-        );
+        await sql.connect(config);
 
-        res.json(rows);
+        const result = await sql.query`
+            SELECT TOP 10 * FROM residents
+        `;
 
-    } catch (error) {
+        res.json(result.recordset);
 
-        console.error(error);
+    } catch (err) {
 
-        res.status(500).json(error.message);
+    console.error("FULL ERROR:");
+    console.error(err);
 
-    }
+    res.status(500).json({
+        error: err.message,
+        code: err.code,
+        name: err.name
+    });
+}
 });
