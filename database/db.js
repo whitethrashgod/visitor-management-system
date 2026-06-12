@@ -1,15 +1,20 @@
-require("dotenv").config();
+const sql = require("mssql");
 
-const mysql = require("mysql2/promise");
-
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
+const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
     database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
+    
+    port: 1433,
 
-module.exports = pool;
+    options: {
+        encrypt: true,
+        trustServerCertificate: true
+    }
+};
+
+module.exports = {
+    sql,
+    config
+};
