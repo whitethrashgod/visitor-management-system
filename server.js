@@ -9,7 +9,8 @@ const webhookRoutes = require("./routes/webhook");
 
 const requestRoutes = require("./routes/requests");
 
-const { sendMessage } = require("./services/whatsappService"); #temporary
+//temporary
+const { sendMessage } = require("./services/whatsappService"); 
 
 const app = express();
 
@@ -19,7 +20,8 @@ app.use("/webhook", webhookRoutes);
 
 app.use("/requests", requestRoutes);
 
-app.get("/send-test", async (req, res) => { #temporary
+//temporary
+app.get("/send-test", async (req, res) => { 
     await sendMessage(
         "917024803684", // your WhatsApp number
         "Hello from AWS EC2"
