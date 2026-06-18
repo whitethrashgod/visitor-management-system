@@ -1,13 +1,3 @@
-router.post("/", async (req, res) => {
-    console.log("===== WEBHOOK HIT =====");
-
-    console.log(
-        JSON.stringify(req.body, null, 2)
-    );
-
-    ...
-});
-
 const express = require("express");
 const router = express.Router();
 const { sendMessage } = require("../services/whatsappService");
@@ -30,7 +20,11 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+
+    console.log("===== WEBHOOK HIT =====");
+
     try {
+
 
         console.log(
             JSON.stringify(req.body, null, 2)
