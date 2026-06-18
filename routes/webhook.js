@@ -22,18 +22,16 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
 
     console.log("===== WEBHOOK HIT =====");
+    console.log("BODY:", JSON.stringify(req.body, null, 2));
 
     try {
-
-
-        console.log(
-            JSON.stringify(req.body, null, 2)
-        );
 
         const message =
             req.body.entry?.[0]
                 ?.changes?.[0]
                 ?.value?.messages?.[0];
+
+        console.log("MESSAGE OBJECT:", message);
 
         if (message) {
 
@@ -45,14 +43,14 @@ router.post("/", async (req, res) => {
 
             await sendMessage(
                 sender,
-                "Welcome to ABC Housinf Society!"
+                "Welcome to ABC Housing Society!"
             );
         }
 
         res.sendStatus(200);
 
     } catch (err) {
-        console.error(err);
+        console.error("ERROR:", err);
         res.sendStatus(500);
     }
 });
