@@ -34,6 +34,17 @@ app.get("/health", (req, res) => {
 const sql = require("mssql");
 const { config } = require("./database/db");
 
+const { sendMessage } = require("./services/whatsappService");
+
+app.get("/send-test", async (req, res) => {
+    await sendMessage(
+        "917024803684", // your WhatsApp number
+        "Hello from AWS EC2"
+    );
+
+    res.send("Sent");
+});
+
 app.get("/db-test", async (req, res) => {
 
     try {
