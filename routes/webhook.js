@@ -19,11 +19,12 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-    console.log(
-        JSON.stringify(req.body, null, 2)
-    );
+    console.log("===== WEBHOOK HIT =====");
+    console.log(new Date().toISOString());
+    console.log(JSON.stringify(req.body, null, 2));
 
     res.sendStatus(200);
 });
 
 module.exports = router;
+
