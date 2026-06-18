@@ -9,6 +9,8 @@ const webhookRoutes = require("./routes/webhook");
 
 const requestRoutes = require("./routes/requests");
 
+const { sendMessage } = require("./services/whatsappService"); #temporary
+
 const app = express();
 
 app.use(express.json());
@@ -16,6 +18,15 @@ app.use(express.json());
 app.use("/webhook", webhookRoutes);
 
 app.use("/requests", requestRoutes);
+
+app.get("/send-test", async (req, res) => { #temporary
+    await sendMessage(
+        "917024803684", // your WhatsApp number
+        "Hello from AWS EC2"
+    );
+
+    res.send("Sent");
+});
 
 app.get("/", (req, res) => {
     res.send("Visitor Management System Running");
@@ -34,16 +45,7 @@ app.get("/health", (req, res) => {
 const sql = require("mssql");
 const { config } = require("./database/db");
 
-const { sendMessage } = require("./services/whatsappService");
 
-app.get("/send-test", async (req, res) => {
-    await sendMessage(
-        "917024803684", // your WhatsApp number
-        "Hello from AWS EC2"
-    );
-
-    res.send("Sent");
-});
 
 app.get("/db-test", async (req, res) => {
 
