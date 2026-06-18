@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+console.log("TOKEN:", process.env.WHATSAPP_TOKEN);
+console.log("PHONE ID:", process.env.PHONE_NUMBER_ID);
+
 const express = require("express");
 
 const webhookRoutes = require("./routes/webhook");
