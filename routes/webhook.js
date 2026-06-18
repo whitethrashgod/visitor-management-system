@@ -9,10 +9,7 @@ router.get("/", (req, res) => {
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
 
-    if (
-        mode === "subscribe" &&
-        token === VERIFY_TOKEN
-    ) {
+    if (mode === "subscribe" && token === VERIFY_TOKEN) {
         return res.status(200).send(challenge);
     }
 
@@ -20,18 +17,14 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-
-    console.log("===== WEBHOOK HIT =====");
-    console.log("BODY:", JSON.stringify(req.body, null, 2));
-
     try {
+
+        console.log(JSON.stringify(req.body, null, 2));
 
         const message =
             req.body.entry?.[0]
                 ?.changes?.[0]
                 ?.value?.messages?.[0];
-
-        console.log("MESSAGE OBJECT:", message);
 
         if (message) {
 
@@ -50,10 +43,9 @@ router.post("/", async (req, res) => {
         res.sendStatus(200);
 
     } catch (err) {
-        console.error("ERROR:", err);
+        console.error(err);
         res.sendStatus(500);
     }
 });
 
 module.exports = router;
-
