@@ -1,3 +1,6 @@
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
+
 require("dotenv").config();
 
 console.log("TOKEN:", process.env.WHATSAPP_TOKEN);
@@ -34,9 +37,16 @@ app.get("/", (req, res) => {
     res.send("Visitor Management System Running");
 });
 
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+);
+
 app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
+
 app.get("/health", (req, res) => {
     res.json({
         status: "OK",
