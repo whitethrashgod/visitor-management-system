@@ -1,41 +1,19 @@
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
-
 require("dotenv").config();
 
-console.log("TOKEN:", process.env.WHATSAPP_TOKEN);
-console.log("PHONE ID:", process.env.PHONE_NUMBER_ID);
-
 const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerSpec = require("./swagger");
 
 const webhookRoutes = require("./routes/webhook");
-
 const requestRoutes = require("./routes/requests");
-
-//temporary
-const { sendMessage } = require("./services/whatsappService"); 
 
 const app = express();
 
 app.use(express.json());
 
 app.use("/webhook", webhookRoutes);
-
 app.use("/requests", requestRoutes);
-
-//temporary
-app.get("/send-test", async (req, res) => { 
-    await sendMessage(
-        "917024803684", // your WhatsApp number
-        "Hello from AWS EC2"
-    );
-
-    res.send("Sent");
-});
-
-app.get("/", (req, res) => {
-    res.send("Visitor Management System Running");
-});
 
 app.use(
     "/api-docs",
@@ -43,8 +21,8 @@ app.use(
     swaggerUi.setup(swaggerSpec)
 );
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+app.get("/", (req, res) => {
+    res.send("Visitor Management System Running");
 });
 
 app.get("/health", (req, res) => {
@@ -54,32 +32,6 @@ app.get("/health", (req, res) => {
     });
 });
 
-const sql = require("mssql");
-const { config } = require("./database/db");
-
-
-
-app.get("/db-test", async (req, res) => {
-
-    try {
-
-        await sql.connect(config);
-
-        const result = await sql.query`
-            SELECT TOP 10 * FROM residents
-        `;
-
-        res.json(result.recordset);
-
-    } catch (err) {
-
-    console.error("FULL ERROR:");
-    console.error(err);
-
-    res.status(500).json({
-        error: err.message,
-        code: err.code,
-        name: err.name
-    });
-}
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
 });
