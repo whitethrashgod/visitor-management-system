@@ -4,7 +4,7 @@ const visitorRepository = require("../repositories/visitorRepository");
 
 const requestRepository = require("../repositories/requestRepository");
 
-class VisitorRequestService {
+class visitorRequestService {
 
     constructor() {
 
@@ -58,4 +58,4 @@ class VisitorRequestService {
     }
 }
 
-module.exports = new VisitorRequestService();
+module.exports = new visitorRequestService();

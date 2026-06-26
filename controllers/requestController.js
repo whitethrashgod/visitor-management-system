@@ -1,5 +1,5 @@
 const visitorRequestService =
-require("../services/VisitorRequestService");
+require("../services/visitorRequestService");
 
 class RequestController {
 
