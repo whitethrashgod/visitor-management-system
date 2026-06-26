@@ -22,7 +22,9 @@ class WebhookController {
                 const text =
                     message.text?.body;
 
-                console.log(sender, text);
+                console.log("Webhook hit!");
+                console.log(sender);
+                console.log(text);
 
                 const reply =
                     await visitorRequestService

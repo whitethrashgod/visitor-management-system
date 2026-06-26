@@ -1,11 +1,8 @@
-const residentRepository =
-    require("../repositories/residentRepository");
+const residentRepository = require("../repositories/residentRepository");
 
-const visitorRepository =
-    require("../repositories/visitorRepository");
+const visitorRepository = require("../repositories/visitorRepository");
 
-const requestRepository =
-    require("../repositories/requestRepository");
+const requestRepository = require("../repositories/requestRepository");
 
 class VisitorRequestService {
 
