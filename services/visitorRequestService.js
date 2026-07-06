@@ -10,14 +10,15 @@ class visitorRequestService {
     }
 
     async processMessage(sender, text) {
-        text = text.trim().toLowerCase();
+        text = text.trim();
+        const normalizedText = text.toLowerCase();
         // Cancel
-        if (text === "cancel") {
+        if (normalizedText === "cancel" || normalizedText === "stop") {
             delete this.sessions[sender];
             return "Conversation cancelled. Type HI to start again.";
         }
         // Start new conversation
-        if (text === "hi" || text === "hello" || text === "start") {
+        if (normalizedText === "hi" || normalizedText === "hello" || normalizedText === "start") {
             this.sessions[sender] = {
                 step: "NAME"
             };
@@ -44,12 +45,10 @@ class visitorRequestService {
             const resident = await residentRepository.getResidentByFlat(text);
 
             if (!resident) {
-
                 return "Flat not found.";
             }
-        const visitorId = await visitorRepository.createVisitor(
-                session.name
-            );
+        try{
+        const visitorId = await visitorRepository.createVisitor(session.name);
 
             await requestRepository.createRequest(
                 visitorId,
@@ -58,7 +57,13 @@ class visitorRequestService {
 
             delete this.sessions[sender];
             return "Visitor request submitted successfully.\n\nType HI to create another request.";
+        } 
+        catch (err){
+            console.error(err);
+            delete this.sessions[sender];
+            return "Sorry, something went wrong while submitting your request. Please type HI to try again.";
         }
     }
+}
 }
 module.exports = new visitorRequestService();
