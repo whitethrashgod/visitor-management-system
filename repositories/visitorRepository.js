@@ -3,14 +3,14 @@ const { config } = require("../database/db");
 
 class VisitorRepository {
 
-    async createVisitor(name) {
+    async createVisitor(name, phoneNumber) {
 
         await sql.connect(config);
 
         const result = await sql.query`
-            INSERT INTO visitors(visitor_name)
+            INSERT INTO visitors(visitor_name, phone_number)
             OUTPUT INSERTED.id
-            VALUES(${name})
+            VALUES(${name}, ${phoneNumber})
         `;
 
         return result.recordset[0].id;
