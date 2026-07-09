@@ -15,6 +15,19 @@ class VisitorRepository {
 
         return result.recordset[0].id;
     }
+    
+    async getVisitorById(id) {
+
+    await sql.connect(config);
+
+    const result = await sql.query`
+        SELECT *
+        FROM visitors
+        WHERE id = ${id}
+    `;
+
+    return result.recordset[0];
+}
 }
 
 module.exports = new VisitorRepository();

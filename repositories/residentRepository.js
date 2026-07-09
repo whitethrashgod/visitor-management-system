@@ -15,6 +15,18 @@ class ResidentRepository {
 
         return result.recordset[0];
     }
+    async getResidentByPhone(phone) {
+
+    await sql.connect(config);
+
+    const result = await sql.query`
+        SELECT *
+        FROM residents
+        WHERE phone_number = ${phone}
+    `;
+
+    return result.recordset[0];
+    }
 }
 
 module.exports = new ResidentRepository();

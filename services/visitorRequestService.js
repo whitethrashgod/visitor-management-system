@@ -14,6 +14,47 @@ class visitorRequestService {
     async processMessage(sender, text) {
         text = text.trim();
         const normalizedText = text.toLowerCase();
+        const resident =
+    await residentRepository.getResidentByPhone(sender);
+
+if (resident) {
+
+    if (
+        normalizedText === "approve" ||
+        normalizedText === "reject"
+    ) {
+        const request =
+await requestRepository.getLatestPendingRequestByResident(
+    resident.id
+);
+
+if (!request) {
+
+    return "No pending requests.";
+}
+const status =
+normalizedText === "approve"
+? "APPROVED"
+: "REJECTED";
+
+await requestRepository.updateStatus(
+    request.id,
+    status
+);
+const visitor =
+await visitorRepository.getVisitorById(
+    request.visitor_id
+);
+await whatsappService.sendMessage(
+    visitor.phone_number,
+    status === "APPROVED"
+        ? "Your visitor request has been approved."
+        : "Your visitor request has been rejected."
+);
+return `Request ${status.toLowerCase()}.`;
+    }
+
+}
         // Cancel
         if (normalizedText === "cancel" || normalizedText === "stop") {
             delete this.sessions[sender];
