@@ -16,18 +16,16 @@ class visitorRequestService {
         const normalizedText = text.toLowerCase();
         const resident =
     await residentRepository.getResidentByPhone(sender);
+    console.log("Sender:", sender);
+    console.log("Resident lookup:", resident);
+if (
+    resident && 
+    (normalizedText === "approve" || normalizedText === "reject")
+    ){
+        console.log("Entered approval block");
 
-if (resident) {
-
-    if (
-        normalizedText === "approve" ||
-        normalizedText === "reject"
-    ) {
-        const request =
-await requestRepository.getLatestPendingRequestByResident(
-    resident.id
-);
-
+    const request = await requestRepository.getLatestPendingRequestByResident(resident.id);
+    console.log("Pending request:", request);
 if (!request) {
 
     return "No pending requests.";
@@ -52,8 +50,6 @@ await whatsappService.sendMessage(
         : "Your visitor request has been rejected."
 );
 return `Request ${status.toLowerCase()}.`;
-    }
-
 }
         // Cancel
         if (normalizedText === "cancel" || normalizedText === "stop") {
